@@ -1,0 +1,97 @@
+#!/usr/bin/env node
+
+/**
+ * Copyright (c) 2016  Andrey Yaresko.
+ * Application main script.
+ *
+ * Pulls together all application modules and runs them.
+ * Handles some configurations errors.
+ *
+ */
+var app = require('../boot/http');
+var debug = require('debug')('app:server');
+var http = require('http');
+var storage = require('mongoose');
+var config = require('../config');
+
+var MessageModel = require('../entities/schemas/message');
+var UserModel = require('../entities/schemas/user');
+
+/**
+ * Get port from environment and store in Express
+ */
+var port = normalizePort(config.global.port || 8081);
+    app.set('port', port);
+    app.locals.author = config.global.author;
+
+/**
+ * Creating HTTP server
+ */
+var server = http.createServer(app);
+
+/**
+ * Attaching HTTP server to an WebSocket engine
+ */
+var wss = require('../boot/ws')(server);
+//var socket = require('../boot/io')(server);
+
+/**
+ * Connecting to a database
+ */
+storage.connect(
+    config.mongoose.host,
+    config.mongoose.database,
+    config.mongoose.port
+);
+
+/**
+ * Listening on provided port, on all network interfaces
+ */
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+function normalizePort( value ) {
+    var port = parseInt(value, 10);
+    if (isNaN(port)) {
+        return value;
+    }
+    if (port >= 0) {
+        return port;
+    }
+    return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+function onError( error ) {
+    if (error.syscall !== 'listen') {
+        throw error;
+    }
+    var bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
+    switch (error.code) {
+        case 'EACCES':
+            console.error(bind + ' requires elevated privileges');
+            process.exit(1);
+            break;
+        case 'EADDRINUSE':
+            console.error(bind + ' is already in use');
+            process.exit(1);
+            break;
+        default:
+            throw error;
+    }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+function onListening() {
+    var address = server.address();
+    var bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + address.port;
+    debug('Listening on ' + bind);
+}

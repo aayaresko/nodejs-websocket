@@ -1,0 +1,52 @@
+{% extends 'base.twig' %}
+{% block title %}Chat page{% endblock %}
+{% block scripts %}
+	<script
+			src="https://code.jquery.com/jquery-2.2.4.js"
+			integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
+			crossorigin="anonymous">
+	</script>
+	<script type="text/javascript" src="/assets/bootstrap/js/bootstrap.js"></script>
+	<script type="text/javascript" src="/assets/scripts/tools.js"></script>
+	<script type="text/javascript" src="/assets/scripts/ws_control.js"></script>
+	{#<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+	<script type="text/javascript" src="/assets/scripts/io_control.js"></script>#}
+{% endblock %}
+{% block header %}
+	{% include '/parts/header.twig' %}
+{% endblock %}
+{% block content %}
+	<div class="row row-eq-height">
+		<div class="col-md-10">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="bg-success box-shadow" id="chat-main-window">
+						<p>Loading...</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-2">
+			<div class="row">
+				<div class="col-md-12">
+					<p>Good day {{ model.firstName }} {{ model.lastName }}!</p>
+					<p>You chat login is: <b>{{ model.nickname }}</b></p>
+					<p>Have a fun!</p>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<form id="chat-message-form" action="send" method="POST" name="publish">
+						<div class="form-group">
+							<textarea id="message" name="message" placeholder="Enter message here" rows="15" class="form-control"></textarea>
+						</div>
+						<button type="submit" class="btn btn-success" value="Send">Send</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+{% block footer %}
+	{% include '/parts/footer.twig' %}
+{% endblock %}

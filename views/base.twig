@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<!--
+  ~ Copyright (c) 2016  Andrey Yaresko.
+  -->
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>
+		{% block title %}Demo chat{% endblock %}
+	</title>
+	{% block styles %}
+		<link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.css">
+		<link rel="stylesheet" href="/assets/bootstrap/css/bootstrap-theme.css">
+		<link rel="stylesheet" href="/assets/styles/main.css">
+	{% endblock %}
+	{% block scripts %}
+		<script
+				src="https://code.jquery.com/jquery-2.2.4.js"
+				integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
+				crossorigin="anonymous">
+		</script>
+		<script type="text/javascript" src="/assets/bootstrap/js/bootstrap.js"></script>
+	{% endblock %}
+</head>
+<body>
+	<div class="header">
+		{% block header %}{% endblock %}
+	</div>
+	<div class="wrap">
+		<div class="content">
+			<div class="container-fluid">
+				{% block content %}{% endblock %}
+			</div>
+		</div>
+	</div>
+	<footer class="footer">
+		<div class="container-fluid">
+			{% block footer %}{% endblock %}
+		</div>
+	</footer>
+</body>
+</html>

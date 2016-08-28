@@ -1,0 +1,15 @@
+{% extends 'base.twig' %}
+{% block title %}Error page{% endblock %}
+{% block header %}
+	{% include '/parts/header.twig' %}
+{% endblock %}
+{% block content %}
+	<div class="row not-found">
+		<div class="col-md-12">
+			<p>Some error occurred! Error code is '{{ error.status }}'. Error message text is '{{ error.message }}'</p>
+		</div>
+	</div>
+{% endblock %}
+{% block footer %}
+	{% include '/parts/footer.twig' %}
+{% endblock %}

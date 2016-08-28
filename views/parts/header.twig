@@ -1,0 +1,30 @@
+<nav class="navbar navbar-default navbar-fixed-top col-md-12">
+<div class="navbar-header">
+	<button class="navbar-toggle" data-toggle="collapse" data-target="#top-menu" type="button">
+		<span class="sr-only">Toggle navigation</span>
+		<span class="icon-bar"></span>
+		<span class="icon-bar"></span>
+		<span class="icon-bar"></span>
+	</button>
+	<a class="navbar-brand" href="/">Home</a>
+</div>
+<div id="top-menu" class="collapse navbar-collapse">
+	<ul id="top-menu-list" class="navbar-nav navbar-right nav">
+		<li>
+			<a href="/chat" >Public chat room</a>
+		</li>
+		{% if authentication.isAuthenticated %}
+			<li>
+				<a href="/logout" >Log out</a>
+			</li>
+		{% else %}
+			<li>
+				<a href="/register" >Registration</a>
+			</li>
+			<li>
+				<a href="/login" >Log in</a>
+			</li>
+		{% endif %}
+	</ul>
+</div>
+</nav>

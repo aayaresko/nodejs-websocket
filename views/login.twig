@@ -1,0 +1,34 @@
+{% extends 'base.twig' %}
+{% block title %}Login page{% endblock %}
+{% block header %}
+	{% include '/parts/header.twig' %}
+{% endblock %}
+{% block content %}
+	<div class="row">
+		<div class="col-md-12">
+			<h1>Login</h1>
+			<p>Fill the form below wis valid data and press 'Sign in' when ready:</p>
+			<div class="row">
+				<div class="col-md-2">
+					<form method="post" role="form">
+						<div class="form-group">
+							<label for="email" class="control-label">Email</label>
+							<input type="email" class="form-control" placeholder="Email" name="email" id="email">
+						</div>
+						<div class="form-group">
+							<label for="password" class="control-label">Password</label>
+							<input type="password" class="form-control" placeholder="Password" name="password" id="password">
+						</div>
+						<div class="form-group">
+							<button type="submit" class="btn btn-primary">Sign in</button>
+						</div>
+						{% include '/parts/errors.twig' %}
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+{% block footer %}
+	{% include '/parts/footer.twig' %}
+{% endblock %}

@@ -1,0 +1,61 @@
+/*
+ * Copyright (c) 2016  Andrey Yaresko.
+ */
+
+html,
+body {
+    height: 100%;
+}
+
+#chat-main-window {
+    min-height: 200px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f5f5f5;
+    color: #333;
+    padding: 9.5px;
+    margin: 0 0 10px;
+    overflow-y: scroll;
+}
+
+.wrap {
+    min-height: 100%;
+    height: auto;
+    margin: 0 auto -60px;
+    padding: 0 0 60px;
+}
+
+.wrap > .content {
+    padding: 70px 15px 20px;
+}
+
+.footer {
+    height: 60px;
+    padding-top: 20px;
+    background-color: #f8f8f8;
+    border-color: #e7e7e7;
+}
+
+.not-found .error {
+    font-family: Aclonica;
+    font-size: 300px;
+    font-style: normal;
+    font-variant: normal;
+    line-height: 305px;
+}
+.not-found .styled {
+    font-family: Aclonica;
+    font-size: 14px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 100;
+    line-height: 20px;
+}
+
+.error-summary {
+    background: #fdf7f7 none repeat scroll 0 0;
+    border-left: 3px solid #eed3d7;
+    color: #a94442;
+    margin: 0 0 15px;
+    padding: 10px 20px;
+}

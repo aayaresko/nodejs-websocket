@@ -1,0 +1,10 @@
+{% if message is not empty %}
+	<div class="form-group">
+		<div class="error-summary">
+			<p>Please fix the following errors:</p>
+			<ul>
+				<li>{{ message }}</li>
+			</ul>
+		</div>
+	</div>
+{% endif %}
