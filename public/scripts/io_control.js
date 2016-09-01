@@ -7,14 +7,16 @@
  */
 
 function Container() {
-    this.content = null;
+    this.message = {
+        content: ''
+    };
 }
 
-var matches = document.cookie.match(/\s?(token=[\.0-9a-zA-z]+)/);
+var matches = document.cookie.match(/\s?(token=[\.\-_0-9a-zA-z]+)/);
 var token = '';
 
 if (matches) {
-    token = matches[2];
+    token = matches[1];
 }
 
 var socket = io.connect('http://localhost:8081', {
@@ -41,8 +43,10 @@ function initControl() {
     document.forms.publish.onsubmit = function( event ) {
         event.preventDefault();
         var container = new Container();
-            container.content = this.message.value;
-        if (container.content) {
+            container.message = {
+                content: this.message.value
+            };
+        if (container.message.content) {
             socket.emit('chat message', container);
         }
     };
@@ -57,15 +61,15 @@ function appendMessage(container) {
     var output = document.getElementById('chat-main-window');
     var message = document.createElement('p');
         message.style.wordWrap = 'break-word';
-    if (container.nickname) {
+    if (container.user) {
         var item = document.createElement('span');
-            item.innerHTML = container.nickname + ': ';
+            item.innerHTML = container.user.nickname + ': ';
         message.appendChild(item);
             item = document.createElement('span');
-            item.innerHTML = container.content;
+            item.innerHTML = container.message.content;
         message.appendChild(item);
     } else {
-        message.innerHTML = container.content;
+        message.innerHTML = container.message.content;
     }
     output.appendChild(message);
     document.getElementById('message').value = null;

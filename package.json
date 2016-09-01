@@ -2,10 +2,7 @@
   "name": "nodejs-websocket",
   "version": "1.0.0",
   "description": "NodeJs Wed-socket and Web-server Application",
-  "main": "index.js",
-  "scripts": {
-    "start": "nodemon ./bin/www"
-  },
+  "main": "/bin/www",
   "author": {
     "name": "Andrey Yaresko",
     "email": "aayaresko@gmail.com"
@@ -22,6 +19,7 @@
     "bcrypt": "^0.8.7",
     "body-parser": "^1.15.2",
     "bootstrap": "^3.3.7",
+    "caminte": "^0.2.13",
     "connect-flash": "^0.1.1",
     "connect-redis": "^3.1.0",
     "cookie-parser": "^1.4.3",
@@ -29,7 +27,6 @@
     "express": "^4.14.0",
     "express-session": "^1.14.0",
     "jsonwebtoken": "^7.1.6",
-    "mongoose": "^4.5.4",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
     "socketio": "^1.0.0",

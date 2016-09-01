@@ -3,7 +3,9 @@
 		<div class="error-summary">
 			<p>Please fix the following errors:</p>
 			<ul>
-				<li>{{ message }}</li>
+				{% for field, error in message %}
+					<li>{{ field ? field : '' }} {{ error }}</li>
+				{% endfor %}
 			</ul>
 		</div>
 	</div>

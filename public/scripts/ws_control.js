@@ -5,8 +5,11 @@
 /**
  * Created by aayaresko on 21.07.16.
  */
+
 function Container() {
-    this.content = null;
+    this.message = {
+        content: ''
+    };
     this.token = document.cookie;
 }
 
@@ -28,9 +31,11 @@ function initControl() {
     clearBoard();
     document.forms.publish.onsubmit = function( event ) {
         event.preventDefault();
-        var container = new Container();
-        container.content = this.message.value;
-        if (container.content) {
+        if (this.message.value) {
+            var container = new Container();
+            container.message = {
+                content: this.message.value
+            };
             var string = JSON.stringify(container);
             ws.send(string);
         }
@@ -39,23 +44,23 @@ function initControl() {
 
 function clearBoard() {
     var output = document.getElementById('chat-main-window');
-    output.innerHTML = '';
+        output.innerHTML = '';
 }
 
-function appendMessage(string) {
-    var container = JSON.parse(string);
+function appendMessage(container) {
+    container = JSON.parse(container);
     var output = document.getElementById('chat-main-window');
     var message = document.createElement('p');
         message.style.wordWrap = 'break-word';
-    if (container.nickname) {
+    if (container.user) {
         var item = document.createElement('span');
-            item.innerHTML = container.nickname + ': ';
+            item.innerHTML = container.user.nickname + ': ';
         message.appendChild(item);
             item = document.createElement('span');
-            item.innerHTML = container.content;
+            item.innerHTML = container.message.content;
         message.appendChild(item);
     } else {
-        message.innerHTML = container.content;
+        message.innerHTML = container.message.content;
     }
     output.appendChild(message);
     document.getElementById('message').value = null;

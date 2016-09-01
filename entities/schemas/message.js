@@ -4,24 +4,40 @@
 
 /**
  * Created by aayaresko on 17.07.16.
- * MongoDb message schema.
+ *
+ * Redis message model.
  *
  * Holds all attributes of message entity.
- * Holds attribute types, default values, validation rules, etc.
+ * Holds attribute types, default values, etc.
  * Return a new instance of message model.
- * See mode info on mongoose model page.
  *
- * @see http://mongoosejs.com/docs/models.html
  */
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var MessageSchema = new Schema({
-    userId: { type: String, required: true },
-    content: { type: String, required: true },
-    createdAt: {
-        type: Date,
-        default: Date.now()
-    }
-});
 
-module.exports = mongoose.model('Message', MessageSchema);
+function Init( Schema ) {
+    var Message = Schema.define('message',
+        {
+            id: {
+                type: Schema.Number,
+                index: true
+            },
+            content: {
+                type: Schema.String
+            },
+            userId: {
+                type: Schema.Number,
+                index: true
+            },
+            createdAt: {
+                type: Schema.Date,
+                default: Date.now()
+            }
+        },
+        {
+            primaryKeys: ['id']
+        }
+    );
+
+    return Message;
+}
+
+module.exports = Init;

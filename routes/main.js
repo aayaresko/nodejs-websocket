@@ -12,71 +12,81 @@
  */
 var express = require('express');
 var router = express.Router();
-var UserModel = require('../entities/schemas/user');
-var authenticationComponent = require('../middlewares/authentication/local');
 var bcrypt = require('bcrypt');
 var config = require('../config');
 
-router.get('/', function( request, response, next ) {
-    response.render('index');
-});
+function Init( Schema ) {
+    var authenticationComponent = require('../middlewares/authentication/local')( Schema );
+    var User = Schema.models.user;
 
-router.get('/login', function( request, response, next ) {
-    response.render('login', { message: request.flash('error') });
-});
+    router.get('/', function( request, response, next ) {
+        response.render('index');
+    });
 
-router.post(
-    '/login',
-    authenticationComponent.authenticate(
-        'local',
-        {
-            successRedirect: '/chat',
-            failureRedirect: '/login',
-            failureFlash: true
+    router.get('/login', function( request, response, next ) {
+        response.render('login', { message: request.flash('error') });
+    });
+
+    router.post(
+        '/login',
+        authenticationComponent.authenticate(
+            'local',
+            {
+                successRedirect: '/chat',
+                failureRedirect: '/login',
+                failureFlash: true
+            }
+        )
+    );
+
+    router.get('/logout', function( request, response, next ) {
+        if (request.user) {
+            response.clearCookie('token');
+            request.logout();
         }
-    )
-);
+        response.redirect('/login');
+    });
 
+    router.get('/register', function( request, response, next ) {
+        if (request.user) {
+            response.clearCookie('token');
+            request.logout();
+        }
+        response.render('register');
+    });
 
-router.get('/logout', function( request, response, next ) {
-    if (request.user) {
-        response.clearCookie('token');
-        request.logout();
-    }
-    response.redirect('/login');
-});
-
-router.get('/register', function( request, response, next ) {
-    if (request.user) {
-        response.clearCookie('token');
-        request.logout();
-    }
-    response.render('register');
-});
-
-router.post('/register', function( request, response, next ) {
-    var user = UserModel(request.body);
-    var errors = user.validateSync();
-    if (errors) {
-        response.render('register', { message: errors, model: user});
-    } else {
-        user.password = bcrypt.hashSync(user.password, 10);
-        user.save(function( error ) {
-            if (error) {
-                response.render('register', { message: error.message, model: user });
+    router.post('/register', function( request, response, next ) {
+        var user = User(request.body);
+        User.validatesPresenceOf('password', 'email');
+        User.validatesUniquenessOf('email', { message: 'someone already uses this email' });
+        User.validatesUniquenessOf('nickname', { message: 'someone already uses this nickname' });
+        user.isValid(function( valid ) {
+            if (!valid) {
+                console.log(user.errors);
+                response.render('register', { message: user.errors, model: user });
             } else {
-                response.redirect('/login');
+                user.password = bcrypt.hashSync(user.password, 10);
+                user.save(function( error ) {
+                    if (error) {
+                        response.render('register', { message: error.message, model: user });
+                    } else {
+                        response.redirect('/login');
+                    }
+                });
             }
         });
-    }
-});
 
-router.get('/contact', function( request, response, next ) {
-    response.render('contact')
-});
+    });
 
-router.get('/socket\.io[?=\.&-_0-9a-zA-Z]+', function( request, response, next ) {
-    response.status(204);
-});
+    router.get('/contact', function( request, response, next ) {
+        response.render('contact')
+    });
 
-module.exports = router;
+    router.get('/socket\.io[?=\.&-_0-9a-zA-Z]+', function( request, response, next ) {
+        response.status(1);
+    });
+
+    return router;
+}
+
+module.exports = Init;

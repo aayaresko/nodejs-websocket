@@ -15,13 +15,18 @@
  *
  * @see http://socket.io/
  */
-function Init( server ) {
-    var Socket = require('socket.io');
-    var io = new Socket(server, {});
-    var MessageModel = require('../entities/schemas/message');
-    var config = require('../config');
-    var socketioJwt = require('socketio-jwt');
 
+var config = require('../config');
+var socketioJwt = require('socketio-jwt');
+
+function Init( Server, Schema ) {
+    var Socket = require('socket.io');
+    var io = new Socket(Server, {});
+    var User = Schema.models.user;
+    var container = {
+        user: null,
+        message: ''
+    };
     io.use(socketioJwt.authorize({
             secret: config.global.secret,
             timeout: 15000, // 15 seconds to send the authentication message
@@ -32,30 +37,41 @@ function Init( server ) {
     io.on('connection', function( client ) {
         var token = client.decoded_token;
         console.log('user connected!');
-        client.on('chat message', function( data ) {
-            var message = MessageModel(data);
-                message.userId = token.id;
-                message.save();
-            var container = data;
-                container.nickname = token.nickname;
-                container.firstName = token.firstName;
-                container.lastName = token.lastName;
-            // send message to all users
-            io.emit('chat message', container);
-        });
         client.on('disconnect', function() {
             console.log('user disconnected!');
         });
-        var container = {
-            nickname: token.nickname,
-            firstName: token.firstName,
-            lastName: token.lastName,
-            content: 'Say hello to a new user'
-        };
-        // send message to all except the current user
-        client.broadcast.emit('notify others', container);
+        function loadContent( done ) {
+            User.findById(token.id, function( error, model ) {
+                if (error) {
+                    done(error);
+                }
+                if (!model) {
+                    done(new Error('not found'));
+                }
+                if (model) {
+                    container.user = model;
+                    done();
+                }
+            });
+        }
+        loadContent(function( error ) {
+            if (!error) {
+                container.message = { content: 'has joined to the chat' };
+                client.broadcast.emit('notify others', container);
+            }
+        });
+        // Since there is no possibility to send message when user model is not defined
+        // we will attach 'chat message' event listener only after that model have been defined
+        client.on('chat message', function( data ) {
+            var user = container.user;
+            var message = user.message.build(data.message);
+                message.save();
+            // we don't need a message id so we use async save
+            container.message = message;
+            // send message to all users
+            io.emit('chat message', container);
+        });
     });
-
     return io;
 }
 

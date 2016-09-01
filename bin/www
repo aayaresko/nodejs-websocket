@@ -8,14 +8,22 @@
  * Handles some configurations errors.
  *
  */
-var app = require('../boot/http');
 var debug = require('debug')('app:server');
-var http = require('http');
-var storage = require('mongoose');
 var config = require('../config');
+var http = require('http');
 
-var MessageModel = require('../entities/schemas/message');
-var UserModel = require('../entities/schemas/user');
+/**
+ * Initiate Redis storage and load models.
+ * All content is stored in Redis.
+ *
+ */
+var caminte = require('caminte');
+var Schema = new caminte.Schema('redis', config.redis);
+var User = require('../entities/schemas/user')(Schema);
+var Message = require('../entities/schemas/message')(Schema);
+require('../entities/schemas/relations')(Schema);
+
+var app = require('../boot/http')(Schema);
 
 /**
  * Get port from environment and store in Express
@@ -32,17 +40,8 @@ var server = http.createServer(app);
 /**
  * Attaching HTTP server to an WebSocket engine
  */
-var wss = require('../boot/ws')(server);
-//var socket = require('../boot/io')(server);
-
-/**
- * Connecting to a database
- */
-storage.connect(
-    config.mongoose.host,
-    config.mongoose.database,
-    config.mongoose.port
-);
+var wss = require('../boot/ws')(server, Schema);
+//var socket = require('../boot/io')(server, Schema);
 
 /**
  * Listening on provided port, on all network interfaces

@@ -15,24 +15,11 @@
  */
 var jwt = require('jsonwebtoken');
 var config = require('../../config');
-var Storage = {
-    nickname: null,
-    firstName: null,
-    lastName: null,
-    email: null,
-    id: null
-};
 
 function Authenticate( options ) {
     return function( request, response, next ) {
         if (request.user) {
-            var user = Object.create(Storage);
-                user.firstName = request.user.firstName;
-                user.lastName = request.user.lastName;
-                user.nickname = request.user.nickname;
-                user.email = request.user.email;
-                user.id = request.user.id;
-            var token = jwt.sign(JSON.stringify(user), config.global.secret);
+            var token = jwt.sign(JSON.stringify({ id: request.user.id }), config.global.secret);
             response.cookie('token', token);
             if (options.successRedirect) {
                 response.redirect(options.successRedirect);

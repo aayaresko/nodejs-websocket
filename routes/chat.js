@@ -11,8 +11,8 @@
  */
 var express = require('express');
 var router = express.Router();
-var authenticationMiddleware = require('../middlewares/authentication/jwt');
 var authorizationMiddleware = require('../middlewares/authorization/force');
+var authenticationMiddleware = require('../middlewares/authentication/jwt');
 
 // first callback: if request.user model is set - creates a new JWT token and send it back to the client
 // second callback: validate current client request - will pass through only if request.user model if set

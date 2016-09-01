@@ -11,19 +11,16 @@ config.redis = {
     host: 'localhost',
     port: 6379
 };
-config.mongoose = {
-    host: 'localhost',
-    database: 'nodejs',
-    port: 27017
-};
+
 config.global = {
-    secret: 'your_secrete_here',
+    secret: 'none',
     port: 8081,
     env: 'development',
     author: {
-        email: 'aayaresko@gmail.com',
-        name: 'Andrey Yaresko',
-        url: 'https://github.com/aayaresko'
+        email: '',
+        name: '',
+        url: ''
     }
 };
+
 module.exports = config;
