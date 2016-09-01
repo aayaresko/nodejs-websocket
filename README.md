@@ -21,6 +21,5 @@ To run an application simply execute './bin/www' in your console.
 
 # Requirements
 * NodeJs 
-* Npm 
-* MongoDB
+* Npm
 * Redis
