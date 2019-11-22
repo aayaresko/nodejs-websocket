@@ -31,7 +31,7 @@
     "passport-local": "^1.0.0",
     "socketio": "^1.0.0",
     "socketio-jwt": "^4.5.0",
-    "twig": "^0.9.5",
+    "twig": "^1.14.0",
     "ws": "^1.1.1"
   },
   "devDependencies": {
