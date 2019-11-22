@@ -16,62 +16,84 @@
  * @see http://socket.io/
  */
 
-var config = require('../config');
-var socketioJwt = require('socketio-jwt');
+let config = require('../config');
+let socketioJwt = require('socketio-jwt');
+
+function handleUserDisconnectedEvent(clientId, users) {
+    let message = 'unknown user disconnected!';
+
+    if (users[clientId]) {
+        let user = users[clientId];
+            message = `user ${user.email} disconnected`;
+
+        delete users[clientId];
+    }
+
+    console.log(message);
+}
+
+function Container() {
+    this.clientId = null;
+    this.user = null;
+    this.message = null;
+}
 
 function Init( Server, Schema ) {
-    var Socket = require('socket.io');
-    var io = new Socket(Server, {});
-    var User = Schema.models.user;
-    var container = {
-        user: null,
-        message: ''
-    };
-    io.use(socketioJwt.authorize({
+    let Socket = require('socket.io'),
+        io = new Socket(Server, {}),
+        User = Schema.models.user,
+        users = {};
+
+    io.use(socketioJwt.authorize(
+        {
             secret: config.global.secret,
             timeout: 15000, // 15 seconds to send the authentication message
             handshake: true, // validate token on handshake
             callback: false // No client-side callback, terminate connection server-side
         })
     );
+
     io.on('connection', function( client ) {
-        var token = client.decoded_token;
+        let token = client.decoded_token;
+
         console.log('user connected!');
-        client.on('disconnect', function() {
-            console.log('user disconnected!');
-        });
-        function loadContent( done ) {
-            User.findById(token.id, function( error, model ) {
-                if (error) {
-                    done(error);
-                }
-                if (!model) {
-                    done(new Error('not found'));
-                }
-                if (model) {
-                    container.user = model;
-                    done();
-                }
-            });
-        }
-        loadContent(function( error ) {
-            if (!error) {
+
+        User.findById(token.id, function (error, model) {
+            if (error || !model) {
+                return null;
+            }
+
+            if (model) {
+                let container = new Container();
+
+                users[client.id] = model;
+                container.user = model;
                 container.message = { content: 'has joined to the chat' };
+
                 client.broadcast.emit('notify others', container);
+
+                client.on('disconnect', function() {
+                    handleUserDisconnectedEvent(client.id, users);
+                });
             }
         });
+
         // Since there is no possibility to send message when user model is not defined
         // we will attach 'chat message' event listener only after that model have been defined
-        client.on('chat message', function( data ) {
-            var user = container.user;
-            var message = user.message.build(data.message);
-                message.save();
-            // we don't need a message id so we use async save
+        client.on('chat message', function (data) {
+            let container = new Container(),
+                user = users[data.clientId],
+                message = user.message.build(data.message);
+
+            message.save();
+
+            container.user = user;
             container.message = message;
-            // send message to all users
+
             io.emit('chat message', container);
         });
     });
+
     return io;
 }
 

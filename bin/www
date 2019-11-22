@@ -40,8 +40,8 @@ var server = http.createServer(app);
 /**
  * Attaching HTTP server to an WebSocket engine
  */
-var wss = require('../boot/ws')(server, Schema);
-//var socket = require('../boot/io')(server, Schema);
+//var wss = require('../boot/ws')(server, Schema);
+var socket = require('../boot/io')(server, Schema);
 
 /**
  * Listening on provided port, on all network interfaces

@@ -6,12 +6,6 @@
  * Created by aayaresko on 17.07.16.
  */
 
-function Container() {
-    this.message = {
-        content: ''
-    };
-}
-
 var matches = document.cookie.match(/\s?(token=[\.\-_0-9a-zA-z]+)/);
 var token = '';
 
@@ -23,13 +17,22 @@ var socket = io.connect('http://localhost:8081', {
     'query': token
 });
 
+
+function Container() {
+    this.clientId = socket.id;
+    this.user = null;
+    this.message = null;
+}
+
 function initSocket() {
     socket.on('chat message', function( data ) {
         appendMessage(data);
     });
+
     socket.on('notify others', function( data ) {
         appendMessage(data);
     });
+
     socket.on('unauthorized', function( error ) {
         if (error.data.type == 'UnauthorizedError' || error.data.code == 'invalid_token') {
             window.location = '/logout';
@@ -40,12 +43,14 @@ function initSocket() {
 
 function initControl() {
     clearBoard();
+
     document.forms.publish.onsubmit = function( event ) {
         event.preventDefault();
-        var container = new Container();
-            container.message = {
-                content: this.message.value
-            };
+
+        let container = new Container();
+
+        container.message = { content: this.message.value };
+
         if (container.message.content) {
             socket.emit('chat message', container);
         }
@@ -53,24 +58,30 @@ function initControl() {
 }
 
 function clearBoard() {
-    var output = document.getElementById('chat-main-window');
+    let output = document.getElementById('chat-main-window');
         output.innerHTML = '';
 }
 
 function appendMessage(container) {
-    var output = document.getElementById('chat-main-window');
-    var message = document.createElement('p');
-        message.style.wordWrap = 'break-word';
+    let output = document.getElementById('chat-main-window'),
+        message = document.createElement('p');
+
+    message.style.wordWrap = 'break-word';
+
     if (container.user) {
-        var item = document.createElement('span');
+        let item = document.createElement('span');
             item.innerHTML = container.user.nickname + ': ';
+
         message.appendChild(item);
-            item = document.createElement('span');
-            item.innerHTML = container.message.content;
+
+        item = document.createElement('span');
+        item.innerHTML = container.message.content;
+
         message.appendChild(item);
     } else {
         message.innerHTML = container.message.content;
     }
+
     output.appendChild(message);
     document.getElementById('message').value = null;
 }
