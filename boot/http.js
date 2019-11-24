@@ -1,29 +1,16 @@
-/*
- * Copyright (c) 2016  Andrey Yaresko.
- */
-
-/**
- * Created by aayaresko on 18.07.16.
- * Http module.
- *
- * Configures and initializes Http-server module.
- * Uses some handlers for application level errors and 404 errors.
- *
- * @see http://expressjs.com
- */
-var express = require('express');
-var bodyParser = require('body-parser');
-var config = require('../config');
-var cookieParser = require('cookie-parser');
-var app = express();
-var authorizationMiddleware = require('../middlewares/authentication/quiet');
+let express = require('express');
+let bodyParser = require('body-parser');
+let config = require('../config');
+let cookieParser = require('cookie-parser');
+let app = express();
+let authorizationMiddleware = require('../middlewares/authentication/quiet');
 
 function Init( Schema ) {
-    var chatRoutes = require('../routes/chat');
-    var mainRoutes = require('../routes/main')( Schema );
+    let chatRoutes = require('../routes/chat');
+    let mainRoutes = require('../routes/main')( Schema );
 
     if (app.get('env') === 'development') {
-        var logger = require('morgan');
+        let logger = require('morgan');
         app.use(logger('dev'));
     }
 
@@ -35,7 +22,7 @@ function Init( Schema ) {
     app.use(cookieParser());
 
     // set up session store
-    var sessionStore = require('./session')(app);
+    let sessionStore = require('./session')(app);
 
     // check whether the current user is logged in
     app.use(authorizationMiddleware());

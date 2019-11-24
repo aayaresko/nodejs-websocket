@@ -1,11 +1,4 @@
-/*
- * Copyright (c) 2016  Andrey Yaresko.
- */
-
-/**
- * Created by aayaresko on 19.07.16.
- */
-var config = {};
+let config = {};
 
 config.redis = {
     host: 'localhost',
