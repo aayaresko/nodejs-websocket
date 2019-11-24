@@ -1,47 +1,39 @@
 #!/usr/bin/env node
 
-/**
- * Copyright (c) 2016  Andrey Yaresko.
- * Application main script.
- *
- * Pulls together all application modules and runs them.
- * Handles some configurations errors.
- *
- */
-var debug = require('debug')('app:server');
-var config = require('../config');
-var http = require('http');
+let debug = require('debug')('app:server');
+let config = require('../config');
+let http = require('http');
 
 /**
  * Initiate Redis storage and load models.
  * All content is stored in Redis.
  *
  */
-var caminte = require('caminte');
-var Schema = new caminte.Schema('redis', config.redis);
-var User = require('../entities/schemas/user')(Schema);
-var Message = require('../entities/schemas/message')(Schema);
+let caminte = require('caminte'),
+    Schema = new caminte.Schema('redis', config.redis),
+    User = require('../entities/schemas/user')(Schema),
+    Message = require('../entities/schemas/message')(Schema);
+
 require('../entities/schemas/relations')(Schema);
 
-var app = require('../boot/http')(Schema);
+let app = require('../boot/http')(Schema);
 
 /**
  * Get port from environment and store in Express
  */
-var port = normalizePort(config.global.port || 8081);
+let port = normalizePort(config.global.port || 8081);
     app.set('port', port);
     app.locals.author = config.global.author;
 
 /**
  * Creating HTTP server
  */
-var server = http.createServer(app);
+let server = http.createServer(app);
 
 /**
  * Attaching HTTP server to an WebSocket engine
  */
-//var wss = require('../boot/ws')(server, Schema);
-var socket = require('../boot/io')(server, Schema);
+let socket = require('../boot/io')(server, Schema);
 
 /**
  * Listening on provided port, on all network interfaces
@@ -53,25 +45,30 @@ server.on('listening', onListening);
 /**
  * Normalize a port into a number, string, or false.
  */
-function normalizePort( value ) {
-    var port = parseInt(value, 10);
+function normalizePort (value) {
+    let port = parseInt(value, 10);
+
     if (isNaN(port)) {
         return value;
     }
+
     if (port >= 0) {
         return port;
     }
+
     return false;
 }
 
 /**
  * Event listener for HTTP server "error" event.
  */
-function onError( error ) {
+function onError (error) {
     if (error.syscall !== 'listen') {
         throw error;
     }
-    var bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
+
+    let bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
+
     switch (error.code) {
         case 'EACCES':
             console.error(bind + ' requires elevated privileges');
@@ -89,8 +86,9 @@ function onError( error ) {
 /**
  * Event listener for HTTP server "listening" event.
  */
-function onListening() {
-    var address = server.address();
-    var bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + address.port;
+function onListening () {
+    let address = server.address();
+    let bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + address.port;
+
     debug('Listening on ' + bind);
 }

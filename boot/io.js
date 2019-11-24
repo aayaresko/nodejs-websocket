@@ -1,25 +1,8 @@
-/*
- * Copyright (c) 2016  Andrey Yaresko.
- */
-
-/**
- * Created by aayaresko on 18.07.16.
- * WebSocket module.
- *
- * Implements extended, more flexible WebSocket server.
- * Configures and initializes WebSocket module.
- * Notifies all users in chat room about connection of a new user.
- * Sends all user messages to all users in chat room.
- * Uses JWT authorization mechanism.
- * Return configured and initialized WebSocket module.
- *
- * @see http://socket.io/
- */
-
 let config = require('../config');
 let socketioJwt = require('socketio-jwt');
+let Socket = require('socket.io');
 
-function handleUserDisconnectedEvent(clientId, users) {
+function handleUserDisconnectedEvent (clientId, users) {
     let message = 'unknown user disconnected!';
 
     if (users[clientId]) {
@@ -32,15 +15,14 @@ function handleUserDisconnectedEvent(clientId, users) {
     console.log(message);
 }
 
-function Container() {
+function Container () {
     this.clientId = null;
     this.user = null;
     this.message = null;
 }
 
-function Init( Server, Schema ) {
-    let Socket = require('socket.io'),
-        io = new Socket(Server, {}),
+function Init (Server, Schema) {
+    let io = new Socket(Server, {}),
         User = Schema.models.user,
         users = {};
 
@@ -53,7 +35,7 @@ function Init( Server, Schema ) {
         })
     );
 
-    io.on('connection', function( client ) {
+    io.on('connection', function (client) {
         let token = client.decoded_token;
 
         console.log('user connected!');
